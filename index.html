@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>나는 꽃</title>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light nav-distance">
+        <a class="navbar-brand na-brand" href="#"></a>
+        <div class="youtube-cover d-flex flex-row-reverse">
+         <img src="img/chs.gif" style="width:5%;height:5%;">
+        </div>
+    </nav>
+     <center><section class="section">
+            <div class="title-img">
+                <img src="img/title.png" style="width:84%;height:30%;">
+            </div>
+        </section>
+<br><br>
+    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <div class="container file-upload">
+        <div class="image-upload-wrap">
+            <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+            <div class=" drag-text">
+                <img src="img/up.png" class="mt-5 upload">
+
+                <h3 class="mb-5 pb-2 pt-1 upload-text">사진을 불러오거나 찍어주세요!</h3>
+            </div>
+        </div>
+        <div class="file-upload-content">
+            <img class="file-upload-image" id="face-image" src="#" alt="your image" />
+            <div id="loading" class="animated bounce">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="text-center">인공지능이 분석중입니다.</p>
+            </div>
+            <p class="result-message"></p>
+            <div id="label-container" class="d-flex flex-column justify-content-around"></div>
+
+            <!-- Go to www.addthis.com/dashboard to customize your tools -->
+            <div class="addthis_inline_share_toolbox_rn3l"></div>
+
+            <div class="pt-3 image-title-wrap">
+                <button type="button p-2" class="try-again-btn" onclick="window.location.reload();">
+                    <span class="try-again-text">다른 사진으로 다시하기</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+ <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://fdsa-3.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
+    <noscript>Please enable JavaScript to view the
+        <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        // More API functions here:
+        // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+        // the link to your model provided by Teachable Machine export panel
+        const URL = "https://teachablemachine.withgoogle.com/models/GcdP_vT7a/";
+        let model, webcam, labelContainer, maxPredictions;
+        // Load the image model and setup the webcam
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+            // load the model and metadata
+            // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+            // or files from your local hard drive
+            // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+            // Convenience function to setup a webcam
+            // append elements to the DOM
+            labelContainer = document.getElementById("label-container");
+            for (let i = 0; i < 9; i++) {
+                var element = document.createElement("div")
+                element.classList.add("d-flex");
+                labelContainer.appendChild(element);
+            }
+        }
+        // run the webcam image through the image model
+        async function predict() {
+            let image = document.getElementById("face-image")
+            // predict can take in an image, video or canvas html element
+            const prediction = await model.predict(image, false);
+            prediction.sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability));
+            console.log(prediction[0].className)
+            let resultTilte;
+            let resultKey;
+            let resultMessage;
+            for (let i = 0; i < maxPredictions; i++) {
+                switch (prediction[i].className) {
+                    case "개나리":
+                        prediction[i].className = "num1";
+                        break;
+                    case "클로바":
+                        prediction[i].className = "num2";
+                        break;
+					 case "프리지아":
+                        prediction[i].className = "num3";
+                        break;
+                    case "국화":
+                        prediction[i].className = "num4";
+                        break;
+					 case "동백":
+                        prediction[i].className = "num5";
+                        break;
+                    case "나팔꽃":
+                        prediction[i].className = "num6";
+                        break;
+					 case "백합":
+                        prediction[i].className = "num7";
+                        break;
+                    case "장미":
+                        prediction[i].className = "num8";
+                        break;
+					 case "해바라기":
+                        prediction[i].className = "num9";
+                        break;	
+                }
+            }
+            switch (prediction[0].className) {
+                case "num1":
+                    resultTilte = "개나리";
+                    resultKey = " \"꽃말 : 희망\" ";
+                    resultMessage = "봄을 상징하는 노란 개나리는 희망이라는 꽃말을 가지고 있어요. 당신은 언제 어디서나 희망을 잃지 않는군요! 어려운 수학 문제가 있어도, 소풍날 비가 올 것 같아도 희망을 잃지 않는 당신, 당신이 희망하는 모든 것이 이루어지길!";
+                    break;
+                case "num2":
+                    resultTilte = "클로바";
+                    resultKey = " \"꽃말 : 약속\" ";
+                    resultMessage = "하얀색의 오밀조밀 피는 클로버는 약속이라는 꽃말을 가지고 있어요. 당신은 약속을 잘 지키는 사람이군요. 지각도 하지 않고, 준비물도 잘 챙기고, 친구들과의 약속도 잘 지키는 당신, 그런 당신을 모두가 신뢰하고 있어요!";
+                    break;
+					case "num3":
+                    resultTilte = "프리지아";
+                    resultKey = " \"꽃말 : 당신의 시작을 응원합니다\" ";
+                    resultMessage = "노란색 꽃잎이 인상적인 프리지아는 새로운 시작을 응원하는 꽃말을 가지고 있어요. 당신은 모든 사람들의 새로운 시작을 응원해주는 멋진 사람이군요. 입학식에서도, 졸업식에서도 누구보다 크게 박수치며 축하해주는 당신. 당신의 모든 시작도 응원할께요!";
+                    break;
+                case "num4":
+                    resultTilte = "국화";
+                    resultKey = " \"꽃말 : 정말 좋은 친구\" ";
+                    resultMessage = "풍성하게 피어나는 꽃잎이 인상적인 국화는 정말 좋은 친구라는 꽃말을 가지고 있어요. 당신은 친구들에게 정말 좋은 친구가 되어주는 사람이군요! 작은 과자 생겨도 나눠 먹고, 친구의 기쁨과 슬픔을 모두 함께 하는 당신은 정말 좋은 친구랍니다.";
+                    break;
+					case "num5":
+                    resultTilte = "동백";
+                    resultKey = " \"꽃말 : 겸손한 마음\" ";
+                    resultMessage = "추운 겨울에도 홀로 피어 사람을 듬뿍 받는 동백의 꽃말은 겸손한 마음이에요. 무엇이든지 잘하고, 빛이 나지만 늘 겸손한 당신과 닮았군요. 시험에서 100점을 받아도, 친구보다 달리기를 잘해도 늘 겸손한 당신, 동백꽃처럼 아름다워요.";
+                    break;
+                case "num6":
+                    resultTilte = "나팔꽃";
+                    resultKey = " \"꽃말 : 기쁜 소식\" ";
+                    resultMessage = "아침마다 꽃을 피워 사람들에게 기쁨을 주는 나팔꽃의 꽃말은 기쁜 소식이에요. 무엇이든지 열심히 하는 당신으로 인해 부모님께서는 매일 기쁜 소식을 듣고 계시네요. 선생님과 주위 사람들이 당신에 대해 칭찬을 많이 하니까요. 존재 자체가 기쁜 소식인 당신! 나팔꽃과 많이 닮았어요.";
+                    break;
+				case "num7":
+                    resultTilte = "백합";
+                    resultKey = " \"꽃말 : 행운을 나누다\" ";
+                    resultMessage = "하얀색의 탐스러운 꽃잎이 인상적인 백합의 꽃말은 행운을 나눈다는 의미를 가지고 있어요. 자신에게 생긴 간식, 선물 등 무엇이든 좋은 것이면 함께 나누는 당신! 행운까지 나누다니 정말 멋져요. 행운을 나누는 당신에게 더 큰 행운이 찾아오길 바래요. ";
+                    break;
+				case "num8":
+                    resultTilte = "장미";
+                    resultKey = " \"꽃말 : 함께 있어요\" ";
+                    resultMessage = "복숭아색의 아름다운 장미꽃은 함께 있어준다는 꽃말을 가지고 있어요. 친구가 부모님께 혼나서 우울해 할 때, 부모님께서 일하시고 돌아와 힘들어하실 때, 늘 당신이 함께 하는 군요. 당신이 함께 해줘서 모든 사람들이 웃음을 잃지 않을 수 있어요.";
+                    break;
+				case "num9":
+                    resultTilte = "해바라기";
+                    resultKey = " \"꽃말 : 행복이 날아오르다\" ";
+                    resultMessage = "크고 노란빛의 해바라기 꽃은 행복이 날아오른다는 꽃말을 가지고 있어요. 당신은 주변을 행복하게 하는 사람이군요! 친구들에게 건네는 다정한 인사와 배려는 친구들을 행복하게 만들어요. 짝을 바꿀 때가 되면 모두 당신과 함께 앉고 싶어 할 거에요.";
+                    break;
+            }
+            let title = "<div class='" + prediction[0].className + "-animal-title alltitle'>" + resultTilte + "</div>"
+            let celeb = "<div class='" + prediction[0].className + "-animal-celeb celfont pt-2 pb-2'>" + resultKey + "</div>"
+            let explain = "<div class='animal-explain pt-2'>" + resultMessage + "</div>"
+            $('.result-message').html(title + celeb + explain);
+            let barwidth;
+            for (let i = 0; i < 9; i++) {
+                if (prediction[i].probability.toFixed(2) > 0.1) {
+                    barwidth = Math.round(prediction[i].probability.toFixed(2) * 100) + "%";
+                } else if (prediction[i].probability.toFixed(2) >= 0.01) {
+                    barwidth = "4%"
+                } else {
+                    barwidth = "2%"
+                }
+                var labelTitle;
+                console.log(prediction[i].className);
+                switch (prediction[i].className) {
+                    case "num1":
+                        labelTitle = "개나리";
+                        break;
+                    case "num2":
+                        labelTitle = "클로바";
+                        break;
+					case "num3":
+                        labelTitle = "프리지아";
+                        break;
+                    case "num4":
+                        labelTitle = "국화";
+                        break;
+					case "num5":
+                        labelTitle = "동백";
+                        break;
+                    case "num6":
+                        labelTitle = "나팔꽃";
+                        break;
+					case "num7":
+                        labelTitle = "백합";
+                        break;
+                    case "num8":
+                        labelTitle = "장미";
+                        break;
+					case "num9":
+                        labelTitle = "해바라기";
+                        break;
+                }
+                var label = "<div class='animal-label d-flex align-items-center'>" + labelTitle + "</div>"
+                var bar = "<div class='bar-container position-relative container'><div class='" + prediction[i].className + "-box'></div><div class='d-flex justify-content-center align-items-center " + prediction[i].className + "-bar' style='width: " + barwidth + "'><span class='d-block percent-text'>" + Math.round(prediction[i].probability.toFixed(2) * 100) + "%</span></div></div>"
+                labelContainer.childNodes[i].innerHTML = label + bar;
+            }
+        }
+    </script>
+
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+                    $('#loading').show();
+                    $('.file-upload-image').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+                    $('.image-title').html(input.files[0].name);
+                };
+                reader.readAsDataURL(input.files[0]);
+                init().then(() => {
+                    predict();
+                    $('#loading').hide();
+                });
+            } else {
+                removeUpload();
+            }
+        }
+
+        function removeUpload() {
+            $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+            $('.file-upload-content').hide();
+            $('.image-upload-wrap').show();
+        }
+        $('.image-upload-wrap').bind('dragover', function() {
+            $('.image-upload-wrap').addClass('image-dropping');
+        });
+        $('.image-upload-wrap').bind('dragleave', function() {
+            $('.image-upload-wrap').removeClass('image-dropping');
+        });
+    </script>
+   </center>
+   </body>
+
+<!-- Copyright (c) 2020 by Aaron Vanston (https://codepen.io/aaronvanston/pen/yNYOXR)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+a
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+
+
+
+</html>
