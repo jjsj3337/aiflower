@@ -186,8 +186,8 @@ s.setAttribute('data-timestamp', +new Date());
                     break;
 				case "num7":
                     resultTilte = "백합";
-                    resultKey = " \"하얀색의 탐스러운 꽃잎이 인상적인 백합의 꽃말은 행운을 나눈다는 의미를 가지고 있어요 자신에게 생긴 간식 선물 등 무엇이든 좋은 것이면 함께 나누는 당신 행운까지 나누다니 정말 멋져요 행운을 나누는 당신에게 더 큰 행운이 찾아오길 바래요 \" ";
-                    resultMessage = "꽃말 : 행운을 나누다";
+                    resultKey = " \"꽃말 : 행운을 나누다\" ";
+                    resultMessage = "하얀색의 탐스러운 꽃잎이 인상적인 백합의 꽃말은 행운을 나눈다는 의미를 가지고 있어요 자신에게 생긴 간식 선물 등 무엇이든 좋은 것이면 함께 나누는 당신 행운까지 나누다니 정말 멋져요 행운을 나누는 당신에게 더 큰 행운이 찾아오길 바래요 ";
                     break;
 				case "num8":
                     resultTilte = "장미";
@@ -196,16 +196,16 @@ s.setAttribute('data-timestamp', +new Date());
                     break;
 				case "num9":
                     resultTilte = "해바라기";
-                    resultKey = " \"크고 노란빛의 해바라기 꽃은 행복이 날아오른다는 꽃말을 가지고 있어요 당신은 주변을 행복하게 하는 사람이군요 친구들에게 건네는 다정한 인사와 배려는 친구들을 행복하게 만들어요 짝을 바꿀 때가 되면 모두 당신과 함께 앉고 싶어 할 거에요\" ";
-                    resultMessage = "꽃말 : 행복이 날아오르다";
+                    resultKey = " \"꽃말 : 행복이 날아오르다\" ";
+                    resultMessage = "크고 노란빛의 해바라기 꽃은 행복이 날아오른다는 꽃말을 가지고 있어요 당신은 주변을 행복하게 하는 사람이군요 친구들에게 건네는 다정한 인사와 배려는 친구들을 행복하게 만들어요 짝을 바꿀 때가 되면 모두 당신과 함께 앉고 싶어 할 거에요";
                     break;
             }
             let title = "<div class='" + prediction[0].className + "-animal-title alltitle'>" + resultTilte + "</div>"
-            let celeb = "<div class='" + prediction[0].className + "-animal-celeb celfont pt-2 pb-2'>" + resultKey + "</div>"
-            let explain = "<div class='animal-explain pt-2'>" + resultMessage + "</div>"
+            let explain = "<div class='" + prediction[0].className + "-animal-celeb celfont pt-2 pb-2'>" + resultKey + "</div>"
+            let celeb = "<div class='animal-explain pt-2'>" + resultMessage + "</div>"
             $('.result-message').html(title + celeb + explain);
             let barwidth;
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < maxPredictions; i++) {
                 if (prediction[i].probability.toFixed(2) > 0.1) {
                     barwidth = Math.round(prediction[i].probability.toFixed(2) * 100) + "%";
                 } else if (prediction[i].probability.toFixed(2) >= 0.01) {
