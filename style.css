@@ -1,6 +1,7 @@
 body {
 font-family: 'Do Hyeon', sans-serif;
   background-color: #a4dcde;
+  box-sizing : border-box;
 }
 
 
@@ -9,10 +10,9 @@ font-family: 'Do Hyeon', sans-serif;
   margin: 0 auto;
   margin-bottom:4%;
   padding: 4.6% 0;
-    width:84.6%;
+    width: 84.6%;
   border-radius: 10px;
   border: solid 1.5px #f6f7fa;
-  background-color: #f6f7fa;
     
 }
 
